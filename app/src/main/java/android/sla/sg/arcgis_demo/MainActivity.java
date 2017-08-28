@@ -26,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mMapView = (MapView) findViewById(R.id.map);
-        mWMTSLayer = new WMTSLayer("http://repo.sgmap.xyz/tileserver/wmts");
+//        mWMTSLayer = new WMTSLayer("http://repo.sgmap.xyz/tileserver/wmts");
+        mWMTSLayer = new WMTSLayer("https://mapservices.onemap.sg/wmts");
         mWMTSLayer.setOpacity((float) 0.5);
         mMapView.addLayer(mWMTSLayer);
         mMapView.setExtent(new Envelope(11532933.483206868,135149.29269599967,11582617.551592167,165227.26332617598));
