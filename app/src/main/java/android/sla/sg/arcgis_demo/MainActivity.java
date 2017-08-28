@@ -3,6 +3,8 @@ package android.sla.sg.arcgis_demo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import com.esri.android.map.FeatureLayer;
 import com.esri.android.map.Layer;
@@ -14,11 +16,19 @@ import com.esri.android.map.ogc.WMTSLayer;
 import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.map.CallbackListener;
+import com.esri.core.ogc.wmts.WMTSLayerInfo;
+import com.esri.core.ogc.wmts.WMTSServiceInfo;
+import com.esri.core.ogc.wmts.WMTSStyle;
 
 public class MainActivity extends AppCompatActivity {
 
+    String defaultMapStyle = "DEFAULT";
+
     MapView mMapView;
-    WMTSLayer mWMTSLayer;
+
+    WMTSLayer currentBaseMapLayer;
+
+    List<WMTSLayerInfo> omLayerInfos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,17 +36,41 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mMapView = (MapView) findViewById(R.id.map);
-//        mWMTSLayer = new WMTSLayer("http://repo.sgmap.xyz/tileserver/wmts");
-        mWMTSLayer = new WMTSLayer("https://mapservices.onemap.sg/wmts");
-        mWMTSLayer.setOpacity((float) 0.5);
-        mMapView.addLayer(mWMTSLayer);
+
         mMapView.setExtent(new Envelope(11532933.483206868,135149.29269599967,11582617.551592167,165227.26332617598));
 
-        mWMTSLayer.setOnStatusChangedListener(new OnStatusChangedListener() {
+        WMTSLayer wmtsLayer = new WMTSLayer("https://mapservices.onemap.sg/wmts");
+
+        wmtsLayer.setOnStatusChangedListener(new OnStatusChangedListener() {
             @Override
-            public void onStatusChanged(Object source, STATUS status) {
-                if ((source == mWMTSLayer) && (status == STATUS.INITIALIZED)) {
-                    Log.e("Layeradded", "LayerAdded");
+            public void onStatusChanged(Object source, STATUS status)
+            {
+                if (status == STATUS.INITIALIZED)
+                {
+                    WMTSLayer layer = (WMTSLayer) source;
+
+                    WMTSServiceInfo serviceInfo = layer.getWmtsServiceInfo();
+
+                    omLayerInfos = serviceInfo.getLayerInfos();
+
+                    for (WMTSLayerInfo layerInfo : omLayerInfos)
+                    {
+                        if(layerInfo.getTitle().toUpperCase().equals(defaultMapStyle))
+                        {
+                            currentBaseMapLayer = new WMTSLayer(layerInfo, layer.getSpatialReference());
+
+                            currentBaseMapLayer.setOnStatusChangedListener(new OnStatusChangedListener() {
+                                @Override
+                                public void onStatusChanged(Object source, STATUS status) {
+                                    if (status == STATUS.INITIALIZED) {
+                                        mMapView.addLayer(currentBaseMapLayer);
+                                    }
+                                }
+                            });
+
+                            currentBaseMapLayer.layerInitialise();
+                        }
+                    }
                 }
             }
         });
