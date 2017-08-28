@@ -39,7 +39,14 @@ public class MainActivity extends AppCompatActivity {
 
         mMapView.setExtent(new Envelope(11532933.483206868,135149.29269599967,11582617.551592167,165227.26332617598));
 
-        WMTSLayer wmtsLayer = new WMTSLayer("https://mapservices.onemap.sg/wmts");
+        //Using the redirect link works
+        WMTSLayer wmtsLayer = new WMTSLayer("https://mapproxy.onemap.sg/wmts/1.0.0/WMTSCapabilities.xml");
+
+        //Cannot work, will https://mapservices-uat.onemap.sg/wmts will redirect to https://mapproxy.onemap.sg/wmts/1.0.0/WMTSCapabilities.xml
+//        WMTSLayer wmtsLayer = new WMTSLayer("https://mapservices-uat.onemap.sg/wmts");
+
+        //Production wmts url
+//        WMTSLayer wmtsLayer = new WMTSLayer("https://mapservices.onemap.sg/wmts");
 
         wmtsLayer.setOnStatusChangedListener(new OnStatusChangedListener() {
             @Override
@@ -71,6 +78,21 @@ public class MainActivity extends AppCompatActivity {
                             currentBaseMapLayer.layerInitialise();
                         }
                     }
+
+                    //For testing purpose, comment off for loop above to activate
+//                    WMTSLayerInfo layerInfo = omLayerInfos.get(1);
+//
+//                    currentBaseMapLayer = new WMTSLayer(layerInfo, layer.getSpatialReference());
+//
+//                    currentBaseMapLayer.setOnStatusChangedListener(new OnStatusChangedListener() {
+//                        @Override
+//                        public void onStatusChanged(Object source, STATUS status) {
+//                            if (status == STATUS.INITIALIZED) {
+//                                mMapView.addLayer(currentBaseMapLayer);
+//                            }
+//                        }
+//                    });
+//                    currentBaseMapLayer.layerInitialise();
                 }
             }
         });
