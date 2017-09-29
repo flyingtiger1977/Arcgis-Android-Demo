@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
         mMapView.setExtent(new Envelope(11532933.483206868,135149.29269599967,11582617.551592167,165227.26332617598));
 
         //Using the redirect link works
-        WMTSLayer wmtsLayer = new WMTSLayer("https://mapproxy.onemap.sg/wmts/1.0.0/WMTSCapabilities.xml");
+        //WMTSLayer wmtsLayer = new WMTSLayer("https://mapproxy.onemap.sg/wmts/1.0.0/WMTSCapabilities.xml");
+        WMTSLayer wmtsLayer = new WMTSLayer("https://mapservices.onemap.sg/mapproxy/wmts/1.0.0/WMTSCapabilities.xml"); //Stable xml
 
         //Cannot work, will https://mapservices-uat.onemap.sg/wmts will redirect to https://mapproxy.onemap.sg/wmts/1.0.0/WMTSCapabilities.xml
 //        WMTSLayer wmtsLayer = new WMTSLayer("https://mapservices-uat.onemap.sg/wmts");
